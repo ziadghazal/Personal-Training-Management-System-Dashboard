@@ -19,12 +19,12 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
       aria-labelledby="modal-title"
     >
       <div 
-        className="bg-gray-800 rounded-lg shadow-xl w-full max-w-md" 
+        className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-md" 
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center border-b border-gray-700 p-4">
-          <h3 id="modal-title" className="text-xl font-semibold text-white">{title}</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-white text-2xl" aria-label="Close modal">&times;</button>
+        <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 p-4">
+          <h3 id="modal-title" className="text-xl font-semibold text-gray-800 dark:text-white">{title}</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-800 dark:hover:text-white text-2xl" aria-label="Close modal">&times;</button>
         </div>
         <div className="p-6">
           {children}
