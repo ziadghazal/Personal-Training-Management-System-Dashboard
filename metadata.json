@@ -1,0 +1,5 @@
+{
+  "name": "Personal Training Management System Dashboard",
+  "description": "An admin dashboard for a personal training management system, allowing management of trainers, clients, and training packages. This interactive interface is designed for administrators to oversee the entire platform.",
+  "requestFramePermissions": []
+}
