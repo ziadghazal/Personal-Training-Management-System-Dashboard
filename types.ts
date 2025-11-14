@@ -37,3 +37,19 @@ export interface Notification {
   packageName: string;
   sessionsLeft: number;
 }
+
+export enum BookingStatus {
+  Confirmed = 'مؤكد',
+  Pending = 'قيد الانتظار',
+  Cancelled = 'ملغي',
+}
+
+export interface Booking {
+  id: string;
+  clientId: string;
+  clientName: string;
+  trainerId: string;
+  trainerName: string;
+  bookingDate: string; // ISO string
+  status: BookingStatus;
+}

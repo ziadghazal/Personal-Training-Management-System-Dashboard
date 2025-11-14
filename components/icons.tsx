@@ -27,3 +27,7 @@ export const BellIcon: React.FC<{ className?: string }> = ({ className }) => (
 export const SettingsIcon: React.FC<{ className?: string }> = ({ className }) => (
     <i className={`fa-solid fa-gear ${className}`}></i>
 );
+
+export const PaletteIcon: React.FC<{ className?: string }> = ({ className }) => (
+    <i className={`fa-solid fa-palette ${className}`}></i>
+);

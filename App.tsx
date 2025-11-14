@@ -7,8 +7,15 @@ import PackagesManagement from './components/PackagesManagement';
 import NotificationDropdown from './components/NotificationDropdown';
 import Toast from './components/Toast';
 import { BellIcon } from './components/icons';
-import { UserRole, Notification, User, Package } from './types';
-import { mockUsers, mockPackages } from './data/mockData';
+import { UserRole, Notification, User, Package, Booking } from './types';
+import { mockUsers, mockPackages, mockBookings } from './data/mockData';
+
+type StatCardColors = {
+  trainers: string;
+  clients: string;
+  packages: string;
+  revenue: string;
+};
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState('dashboard');
@@ -16,14 +23,27 @@ const App: React.FC = () => {
   
   const [users, setUsers] = useState<User[]>(mockUsers);
   const [packages, setPackages] = useState<Package[]>(mockPackages);
+  const [bookings, setBookings] = useState<Booking[]>(mockBookings);
 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isNotificationOpen, setNotificationOpen] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' as 'success' | 'error' });
+  const [statCardColors, setStatCardColors] = useState<StatCardColors>({
+    trainers: 'bg-blue-500',
+    clients: 'bg-green-500',
+    packages: 'bg-yellow-500',
+    revenue: 'bg-red-500',
+  });
 
   useEffect(() => {
+    // Define the condition for when to generate a notification.
+    const NOTIFICATION_THRESHOLD_SESSIONS = 2;
+
     const expiringClients = users.filter(
-      (user) => user.role === UserRole.Client && user.sessionsLeft && user.sessionsLeft <= 2
+      (user) =>
+        user.role === UserRole.Client &&
+        user.sessionsLeft !== undefined && // Check for existence, including 0.
+        user.sessionsLeft <= NOTIFICATION_THRESHOLD_SESSIONS
     );
 
     const generatedNotifications: Notification[] = expiringClients.map((client) => ({
@@ -97,13 +117,24 @@ const App: React.FC = () => {
     }
   };
 
+  const handleUpdateStatCardColors = (newColors: StatCardColors) => {
+    setStatCardColors(newColors);
+    showToast('تم تحديث ألوان البطاقات بنجاح');
+  };
+
   const renderView = useCallback(() => {
     const trainers = users.filter(u => u.role === UserRole.Trainer);
     const clients = users.filter(u => u.role === UserRole.Client);
 
     switch (currentView) {
       case 'dashboard':
-        return <Dashboard users={users} packages={packages}/>;
+        return <Dashboard 
+                  users={users} 
+                  packages={packages} 
+                  bookings={bookings}
+                  statCardColors={statCardColors}
+                  onUpdateColors={handleUpdateStatCardColors}
+                />;
       case 'trainers':
         return <TrainersManagement 
                   trainers={trainers}
@@ -125,9 +156,15 @@ const App: React.FC = () => {
                   onDeletePackage={handleDeletePackage}
                 />;
       default:
-        return <Dashboard users={users} packages={packages}/>;
+        return <Dashboard 
+                  users={users} 
+                  packages={packages} 
+                  bookings={bookings}
+                  statCardColors={statCardColors}
+                  onUpdateColors={handleUpdateStatCardColors}
+                />;
     }
-  }, [currentView, users, packages]);
+  }, [currentView, users, packages, bookings, statCardColors]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);

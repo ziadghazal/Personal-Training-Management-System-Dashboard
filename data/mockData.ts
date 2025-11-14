@@ -1,4 +1,4 @@
-import { User, Package, UserRole, TrainingType } from '../types';
+import { User, Package, UserRole, TrainingType, Booking, BookingStatus } from '../types';
 
 export const mockUsers: User[] = [
   { id: 't1', name: 'أحمد محمود', role: UserRole.Trainer, city: 'الرياض', specialization: 'لياقة بدنية', joinDate: '2023-01-15' },
@@ -16,4 +16,34 @@ export const mockPackages: Package[] = [
   { id: 'p3', name: 'باقة EMS الذهبية', type: TrainingType.EMS, sessions: 12, price: 1500 },
   { id: 'p4', name: 'باقة Platten المكثفة', type: TrainingType.Platten, sessions: 4, price: 600 },
   { id: 'p5', name: 'باقة تجريبية', type: TrainingType.Normal, sessions: 1, price: 120 },
+];
+
+export const mockBookings: Booking[] = [
+    { 
+        id: 'b1', 
+        clientId: 'c1',
+        clientName: 'فاطمة علي',
+        trainerId: 't1',
+        trainerName: 'أحمد محمود',
+        bookingDate: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // ~2 hours from now
+        status: BookingStatus.Confirmed 
+    },
+    { 
+        id: 'b2', 
+        clientId: 'c2',
+        clientName: 'محمد صالح',
+        trainerId: 't2',
+        trainerName: 'خالد الغامدي',
+        bookingDate: new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString(), // ~4 hours from now
+        status: BookingStatus.Confirmed 
+    },
+    { 
+        id: 'b3', 
+        clientId: 'c4',
+        clientName: 'نورة خالد',
+        trainerId: 't3',
+        trainerName: 'سارة عبد العزيز',
+        bookingDate: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(), // ~6 hours from now
+        status: BookingStatus.Pending 
+    },
 ];
