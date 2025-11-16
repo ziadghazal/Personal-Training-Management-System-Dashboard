@@ -277,62 +277,64 @@ const App: React.FC = () => {
         </div>
       );
     }
-    return <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-900 dark:bg-gray-900 bg-gray-100"><ErrorBoundary t={t}>{renderView()}</ErrorBoundary></main>;
+    return <main className="flex-1 overflow-x-hidden overflow-y-auto"><ErrorBoundary t={t}>{renderView()}</ErrorBoundary></main>;
   }
 
   return (
-    <div className={`flex h-screen bg-gray-100 dark:bg-gray-900`}>
-      <Sidebar currentView={currentView} setCurrentView={changeView} isSidebarOpen={isSidebarOpen} t={t} />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white dark:bg-gray-800 shadow-md p-4 flex justify-between items-center">
-          <button onClick={toggleSidebar} className="text-gray-800 dark:text-white text-xl">
-             <i className={`fas ${isSidebarOpen ? 'fa-times' : 'fa-bars'}`}></i>
-          </button>
-          <div className="flex items-center gap-4">
-             <div className="relative">
-                <button
-                    onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')}
-                    className="text-gray-800 dark:text-white text-xl"
-                    aria-label="Change Language"
-                >
-                    <LanguageIcon />
+    <div className="bg-gray-100 dark:bg-gray-900">
+      <Sidebar currentView={currentView} setCurrentView={changeView} isSidebarOpen={isSidebarOpen} t={t} language={language} />
+      <div className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? (language === 'ar' ? 'mr-64' : 'ml-64') : ''}`}>
+        <div className="flex flex-col h-screen">
+            <header className="bg-white dark:bg-gray-800 shadow-md p-4 flex justify-between items-center relative z-20">
+              <button onClick={toggleSidebar} className="text-gray-800 dark:text-white text-xl">
+                 <i className={`fas ${isSidebarOpen ? 'fa-times' : 'fa-bars'}`}></i>
+              </button>
+              <div className="flex items-center gap-4">
+                 <div className="relative">
+                    <button
+                        onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')}
+                        className="text-gray-800 dark:text-white text-xl"
+                        aria-label="Change Language"
+                    >
+                        <LanguageIcon />
+                    </button>
+                 </div>
+                 <button
+                    onClick={() => setNotificationOpen(!isNotificationOpen)}
+                    className="relative text-gray-800 dark:text-white text-xl"
+                    aria-label="Notifications"
+                 >
+                    <BellIcon />
+                    {notifications.length > 0 && (
+                      <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
+                        {notifications.length}
+                      </span>
+                    )}
                 </button>
-             </div>
-             <button
-                onClick={() => setNotificationOpen(!isNotificationOpen)}
-                className="relative text-gray-800 dark:text-white text-xl"
-                aria-label="Notifications"
-             >
-                <BellIcon />
-                {notifications.length > 0 && (
-                  <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
-                    {notifications.length}
-                  </span>
-                )}
-            </button>
-            <span className="text-gray-800 dark:text-white">{t('welcome_admin')}</span>
-            <img className="h-10 w-10 rounded-full object-cover" src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=200&h=200" alt="Admin Avatar" />
-          </div>
-        </header>
-        
-        {isNotificationOpen && (
-          <NotificationDropdown
-            notifications={notifications}
-            onSendReminder={handleSendReminder}
-            onClose={() => setNotificationOpen(false)}
-            t={t}
-          />
-        )}
-        
-        <MainContent/>
-        
-        <Toast 
-            message={toast.message} 
-            show={toast.show} 
-            onClose={() => setToast({ ...toast, show: false })}
-            type={toast.type}
-        />
+                <span className="text-gray-800 dark:text-white">{t('welcome_admin')}</span>
+                <img className="h-10 w-10 rounded-full object-cover" src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&q=80&w=200&h=200" alt="Admin Avatar" />
+              </div>
+            </header>
+            
+            <MainContent/>
+        </div>
       </div>
+        
+      {isNotificationOpen && (
+        <NotificationDropdown
+          notifications={notifications}
+          onSendReminder={handleSendReminder}
+          onClose={() => setNotificationOpen(false)}
+          t={t}
+        />
+      )}
+      
+      <Toast 
+          message={toast.message} 
+          show={toast.show} 
+          onClose={() => setToast({ ...toast, show: false })}
+          type={toast.type}
+      />
     </div>
   );
 };

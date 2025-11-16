@@ -3,6 +3,37 @@ import { User, Package } from '../types';
 import Modal from './Modal';
 import { SpinnerIcon } from './icons';
 
+interface QRCodeModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  client: User | null;
+  t: (key: string) => string;
+}
+
+const QRCodeModal: React.FC<QRCodeModalProps> = ({ isOpen, onClose, client, t }) => {
+  if (!isOpen || !client) return null;
+
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(client.id)}`;
+
+  return (
+    <Modal isOpen={isOpen} onClose={onClose} title={`${t('qr_code_for')} ${client.name}`}>
+      <div className="text-center">
+        <img src={qrCodeUrl} alt={`${t('qr_code_for')} ${client.name}`} className="mx-auto my-4 border-4 border-gray-300 dark:border-gray-600 rounded-lg" />
+        <p className="text-gray-500 dark:text-gray-400">{t('scan_qr_instruction')}</p>
+        <div className="mt-6">
+           <button 
+            onClick={onClose} 
+            className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white transition-colors"
+          >
+            {t('close')}
+          </button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+
 interface ClientFormProps {
   onSubmit: (client: User) => Promise<void>;
   onClose: () => void;
@@ -66,6 +97,7 @@ const ClientsManagement: React.FC<ClientsManagementProps> = ({ clients, packages
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<User | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [qrClient, setQrClient] = useState<User | null>(null);
 
   const getPackageName = (packageId?: string) => {
     return packages.find(p => p.id === packageId)?.name || t('unsubscribed');
@@ -74,6 +106,10 @@ const ClientsManagement: React.FC<ClientsManagementProps> = ({ clients, packages
   const openEditModal = (client: User) => {
     setEditingClient(client);
     setIsModalOpen(true);
+  };
+  
+  const openQrModal = (client: User) => {
+    setQrClient(client);
   };
 
   const handleFormSubmit = async (client: User) => {
@@ -130,7 +166,7 @@ const ClientsManagement: React.FC<ClientsManagementProps> = ({ clients, packages
                     </span>
                   </td>
                   <td className="px-6 py-4 flex items-center gap-4">
-                     <button className="text-green-500 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300"><i className="fas fa-qrcode me-1"></i> {t('show_qr')}</button>
+                     <button onClick={() => openQrModal(client)} className="text-green-500 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300"><i className="fas fa-qrcode me-1"></i> {t('show_qr')}</button>
                     <button onClick={() => openEditModal(client)} className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"><i className="fas fa-edit me-1"></i> {t('edit')}</button>
                   </td>
                 </tr>
@@ -158,6 +194,13 @@ const ClientsManagement: React.FC<ClientsManagementProps> = ({ clients, packages
           />
         </Modal>
       )}
+
+      <QRCodeModal 
+        isOpen={!!qrClient}
+        onClose={() => setQrClient(null)}
+        client={qrClient}
+        t={t}
+      />
     </div>
   );
 };
